@@ -10,7 +10,6 @@ const StatusPrazo = { NoPrazo: 'NoPrazo', EmAtraso: 'EmAtraso', Concluido: 'Conc
 // Status Manual (Kanban) - esta é a nova fonte da verdade para o Kanban
 const StatusManual = { NoPrazo: 'NoPrazo', EmAtraso: 'EmAtraso', EmSimulacao: 'EmSimulacao', Concluido: 'Concluido', Standby: 'Standby' };
 
-
 // Converte os enums para arrays de {value, name} para preencher selects
 const tipoOptions = Object.entries(TipoDispositivo).map(([name, value]) => ({ value, name }));
 const nivelOptions = Object.entries(NivelPrioridade).map(([name, value]) => ({ value, name }));
@@ -121,7 +120,6 @@ function calcularStatusPrazo(d) {
     return StatusPrazo.NoPrazo;
 }
 
-
 // ==============================================
 // LÓGICA DE ROTEAMENTO
 // ==============================================
@@ -157,7 +155,7 @@ function showPage(pageId) {
     
     // Força o inkbar a se mover para o link ativo
     if (window.SiteUX && window.SiteUX.moveInk) {
-         window.SiteUX.moveInk($(`.nav-link[data-page="${pageId}"]`), false);
+        window.SiteUX.moveInk($(`.nav-link[data-page="${pageId}"]`), false);
     }
 }
 
@@ -230,7 +228,7 @@ function renderSetup() {
         $('#setup-milestones-section').style.display = 'block';
         $('#setup-milestones-title').innerHTML = `Milestones — <span style="color:${classe.CorHex}">${escapeHtml(classe.Nome)}</span>`;
     } else {
-         $('#setup-milestones-section').style.display = 'none';
+        $('#setup-milestones-section').style.display = 'none';
     }
 }
 
@@ -398,7 +396,6 @@ function salvarModalDispositivo() {
     fecharModalDispositivo();
     renderTodasPaginas(); // Atualiza todas as páginas que dependem de dispositivos
 }
-
 
 // ==============================================
 // RENDERIZAÇÃO PÁGINA: DescricaoEvento
@@ -720,15 +717,15 @@ function initDashboardCharts() {
     // Gráfico de Status (Doughnut)
     const ctxStatus = $('#chart-status');
     if (ctxStatus) {
-         chartStatusInstance = new Chart(ctxStatus, {
+        chartStatusInstance = new Chart(ctxStatus, {
             type: 'doughnut',
             data: {
-                labels: [], // 'No Prazo', 'Em Atraso', 'Em Simulação', 'Concluído', 'Standby'
+                labels: [], // será preenchido dinamicamente
                 datasets: [{
                     label: 'Status dos Dispositivos',
-                    data: [], // [10, 5, 3, 8, 2]
+                    data: [],
                     backgroundColor: [
-                        'rgba(245, 158, 11, 0.7)', // warn
+                        'rgba(245, 158, 11, 0.7)',  // warn
                         'rgba(239, 68, 68, 0.7)',  // error
                         'rgba(37, 99, 235, 0.7)',  // primary-light
                         'rgba(16, 185, 129, 0.7)', // success
@@ -742,9 +739,7 @@ function initDashboardCharts() {
                 responsive: true,
                 plugins: {
                     legend: {
-                        labels: {
-                            color: '#9CA3AF' // var(--text)
-                        }
+                        labels: { color: '#9CA3AF' }
                     }
                 }
             }
@@ -760,7 +755,7 @@ function initDashboardCharts() {
                 labels: ['DR1', 'DR2', 'DR3', '2D', 'PS', 'Release'],
                 datasets: [{
                     label: 'Média de Conclusão (%)',
-                    data: [], // [60, 40, 15, 30, 20, 5]
+                    data: [],
                     backgroundColor: [
                         'rgba(14, 165, 233, 0.7)', // sky-500
                         'rgba(34, 197, 94, 0.7)',  // green-500
@@ -775,29 +770,17 @@ function initDashboardCharts() {
             },
             options: {
                 responsive: true,
-                indexAxis: 'y', // Faz o gráfico de barras horizontais
+                indexAxis: 'y', // barras horizontais
                 scales: {
                     x: {
                         beginAtZero: true,
                         max: 100,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            callback: (value) => value + '%'
-                        }
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { callback: (value) => value + '%' }
                     },
-                    y: {
-                         grid: {
-                            display: false
-                         }
-                    }
+                    y: { grid: { display: false } }
                 },
-                plugins: {
-                    legend: {
-                        display: false // Já está no label do dataset
-                    }
-                }
+                plugins: { legend: { display: false } }
             }
         });
     }
@@ -809,9 +792,7 @@ function updateDashboardCharts() {
     
     // 1. Dados para o Gráfico de Status (Doughnut)
     let counts = { NoPrazo: 0, EmAtraso: 0, EmSimulacao: 0, Concluido: 0, Standby: 0 };
-    state.dispositivos.forEach(d => {
-        counts[d.StatusManual]++;
-    });
+    state.dispositivos.forEach(d => { counts[d.StatusManual]++; });
     
     chartStatusInstance.data.labels = [
         `No Prazo (${counts.NoPrazo})`,
@@ -834,29 +815,28 @@ function updateDashboardCharts() {
     const totalDisp = state.dispositivos.length;
     
     if (totalDisp > 0) {
-         state.dispositivos.forEach(d => {
+        state.dispositivos.forEach(d => {
             fases.DR1 += d.DR1Percentual || 0;
             fases.DR2 += d.DR2Percentual || 0;
             fases.DR3 += d.DR3Percentual || 0;
             fases.DoisD += d.DoisDPercentual || 0;
             fases.PlanoSequencia += d.PlanoSequenciaPercentual || 0;
             fases.Release += d.ReleasePercentual || 0;
-         });
-         
-         chartFasesInstance.data.datasets[0].data = [
+        });
+        
+        chartFasesInstance.data.datasets[0].data = [
             (fases.DR1 / totalDisp).toFixed(1),
             (fases.DR2 / totalDisp).toFixed(1),
             (fases.DR3 / totalDisp).toFixed(1),
             (fases.DoisD / totalDisp).toFixed(1),
             (fases.PlanoSequencia / totalDisp).toFixed(1),
             (fases.Release / totalDisp).toFixed(1)
-         ];
+        ];
     } else {
-         chartFasesInstance.data.datasets[0].data = [0,0,0,0,0,0];
+        chartFasesInstance.data.datasets[0].data = [0,0,0,0,0,0];
     }
     chartFasesInstance.update();
 }
-
 
 // ==============================================
 // RENDERIZAÇÃO PÁGINA: Kanban
@@ -913,7 +893,7 @@ function renderKanban() {
             e.dataTransfer.effectAllowed = 'move';
             setTimeout(() => card.style.opacity = '0.5', 0);
         });
-        card.addEventListener('dragend', (e) => {
+        card.addEventListener('dragend', () => {
             card.style.opacity = '1';
             draggingElement = null;
         });
@@ -937,7 +917,7 @@ function setupKanbanDropZones() {
             e.dataTransfer.dropEffect = 'move';
             col.classList.add('over');
         });
-        col.addEventListener('dragleave', e => col.classList.remove('over'));
+        col.addEventListener('dragleave', () => col.classList.remove('over'));
         col.addEventListener('drop', e => {
             e.preventDefault();
             col.classList.remove('over');
@@ -1116,7 +1096,7 @@ function enhanceNav() {
 }
 
 // ==============================================
-// INICIALIZAÇÃO E EVENT LISTENERS
+/* INICIALIZAÇÃO E EVENT LISTENERS */
 // ==============================================
 document.addEventListener('DOMContentLoaded', () => {
     // Inicia o inkbar
@@ -1194,14 +1174,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (target.dataset.action === 'delete-ms') {
-                if (confirm('Tem certeza que quer excluir este milestone?')) {
-                    const id = parseInt(target.dataset.id);
-                    if (state.milestones[state.selectedClasseId]) {
-                        state.milestones[state.selectedClasseId] = state.milestones[state.selectedClasseId].filter(m => m.Id !== id);
-                    }
-                    renderSetup(); // Atualiza a hierarquia
-                    showToast("Milestone excluído.", "ok");
+            if (confirm('Tem certeza que quer excluir este milestone?')) {
+                const id = parseInt(target.dataset.id);
+                if (state.milestones[state.selectedClasseId]) {
+                    state.milestones[state.selectedClasseId] = state.milestones[state.selectedClasseId].filter(m => m.Id !== id);
                 }
+                renderSetup(); // Atualiza a hierarquia
+                showToast("Milestone excluído.", "ok");
+            }
         }
         
         // --- Descrição Evento: Toggle ---
