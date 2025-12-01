@@ -1,0 +1,124 @@
+﻿<!-- Comentario de teste adicionado -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestao de Simulacao</title>
+    <base href="./" />
+    <link rel="preload" href="assets/logo_comau_azul.png" as="image" />
+    <link rel="prefetch" href="ControleStatus.html" />
+    <link rel="prefetch" href="index.html" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="top-header">
+        <div class="brand">
+            <img src="assets/logo_comau_azul.png" alt="Comau" class="brand-logo" />
+            <div class="brand-info">
+                <strong class="brand-title">Gestao de Simulacao</strong>
+                <span class="brand-sub">Preview - Comau</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a class="btn btn-icon" title="Voltar" aria-label="Voltar" href="index.html">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <select id="projeto-selector" class="input" aria-label="Selecionar projeto"></select>
+            <button class="btn btn-primary" id="btn-novo-projeto">+ Novo projeto</button>
+            <button class="btn btn-icon" title="Recarregar" aria-label="Recarregar" onclick="location.reload()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 6a6 6 0 1 1-4.24 10.24" />
+                    <path d="M3 6h6v6" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="app-content">
+        <section class="page-header">
+            <h1>Gestão de Simulação</h1>
+        </section>
+
+        <section class="grid grid-3">
+            <div class="card" style="grid-column: span 2 / span 2;">
+            <div class="card" style="grid-column: span 2 / span 2;">
+                <h3 class="app-title" style="font-size:16px;margin-top:0;">Liberacao de Dispositivos</h3>
+                <p>Arraste dispositivos em simulacao/concluidos da coluna "Para Liberar" para "Liberados". Clique no card para detalhes.</p>
+                    <div class="kanban-col" data-status="para-liberar">
+                        <header class="kanban-col-head">
+                            <span class="badge warn">Para Liberar (Concluídos)</span>
+                            <small style="color:var(--muted)" id="sim-label-liberar">(0)</small>
+                        </header>
+                        <div class="kanban-list" id="sim-list-liberar"></div>
+                    </div>
+                    <div class="kanban-col" data-status="liberado">
+                        <header class="kanban-col-head">
+                            <span class="badge ok">Liberados para Simulaï¿½ï¿½o</span>
+                            <small style="color:var(--muted)" id="sim-label-liberado">(0)</small>
+                        </header>
+                        <div class="kanban-list" id="sim-list-liberado"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="app-title" style="font-size:16px;margin-top:0;">Adicionar Robôs</h3>
+                <h3 class="app-title" style="font-size:16px;margin-top:0;">Adicionar Robos</h3>
+                    <label for="sim-robo-nome">Nome do Robô</label>
+                    <input type="text" id="sim-robo-nome" placeholder="Ex: R-001" />
+                    <label for="sim-robo-nome">Nome do Robo</label>
+                <div class="mt-3">
+                    <label for="sim-robo-tipo">Tipo</label>
+                    <select id="sim-robo-tipo">
+                        <option value="kuka">Kuka</option>
+                        <option value="abb">ABB</option>
+                        <option value="fanuc">Fanuc</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-primary" id="sim-add-robo">Adicionar Robô</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="modal-backdrop" id="sim-detail-backdrop"></div>
+    <div class="modal small" id="sim-detail">
+        <div class="modal-head">
+            <h3 class="app-title" style="margin:0;">Detalhes do dispositivo</h3>
+            <button type="button" class="btn ghost" id="sim-detail-close">Fechar</button>
+        </div>
+        <div class="modal-body" id="sim-detail-body"></div>
+    </div>
+
+    <script src="bridge.js"></script>
+    <script src="app.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.__simInitDone) {
+                if (typeof setupKanbanDropZones === 'function') setupKanbanDropZones();
+                if (typeof renderSimulacao === 'function') renderSimulacao();
+                window.__simInitDone = true;
+            }
+            var add = document.getElementById('sim-add-robo');
+            if (add && typeof showToast === 'function') {
+                add.addEventListener('click', function () {
+                    var nome = document.getElementById('sim-robo-nome').value || '';
+                    if (nome.trim().length > 0) {
+                        showToast('Robï¿½ "' + nome + '" adicionado (simulaï¿½ï¿½o).', 'ok');
+                        document.getElementById('sim-robo-nome').value = '';
+                    } else {
+                        showToast('Informe um nome para o robï¿½.', 'err');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+﻿<!-- Comentario de teste adicionado -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Controle de Status</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="status-page">
+    <header class="top-header">
+        <div class="brand">
+            <img src="assets/logo_comau_azul.png" alt="Comau" class="brand-logo" />
+            <div class="brand-info">
+                <strong class="brand-title">Controle de Status</strong>
+                <span class="brand-sub">Projetos Mecânicos • Preview</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <a class="btn btn-icon" title="Voltar" aria-label="Voltar" href="index.html">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+            </a>
+
+            <select id="projeto-selector" class="input" aria-label="Selecionar projeto"></select>
+
+            <button class="btn btn-primary" id="btn-novo-projeto">+ Novo projeto</button>
+            <button class="btn" id="btn-add-dispositivo">+ Disp</button>
+        </div>
+    </header>
+
+    <nav class="top-nav glass nav-shell">
+        <ul class="menu" tabindex="0">
+            <li><a class="nav-link active" data-sub-page="setup" href="#">Setup</a></li>
+            <li><a class="nav-link" data-sub-page="descricaoevento" href="#">Descricao Evento</a></li>
+            <li><a class="nav-link" data-sub-page="dispositivos" href="#">Dispositivos</a></li>
+            <li><a class="nav-link" data-sub-page="cronograma" href="#">Cronograma</a></li>
+            <li><a class="nav-link" data-sub-page="dashboard" href="#">Dashboard</a></li>
+            <li><a class="nav-link" data-sub-page="kanban" href="#">Kanban</a></li>
+            <li><a class="nav-link" data-sub-page="recurso" href="#">Recurso</a></li>
+        </ul>
+        <span class="inkbar" aria-hidden="true"></span>
+    </nav>
+
+    <main class="page page-shell">
+        <!-- Dashboard -->
+        <section id="sub-page-dashboard" class="sub-page-content">
+            <div class="card">
+                <h2 class="app-title" style="margin:0;">Dashboard - Visao Geral</h2>
+            </div>
+            <div class="grid grid-4">
+                <article class="card kpi">
+                    <div class="kpi-title">Dispositivos</div>
+                    <div class="kpi-value" id="dash-kpi-total">0</div>
+                    <small class="kpi-sub">total</small>
+                </article>
+                <article class="card kpi">
+                    <div class="kpi-title">No Prazo</div>
+                    <div class="kpi-value" id="dash-kpi-prazo">0</div>
+                    <small class="kpi-sub">andamento ok</small>
+                </article>
+                <article class="card kpi">
+                    <div class="kpi-title">Em Atraso</div>
+                    <div class="kpi-value" id="dash-kpi-atraso">0</div>
+                    <small class="kpi-sub">precisam de atencao</small>
+                </article>
+                <article class="card kpi">
+                    <div class="kpi-title">Concluidos</div>
+                    <div class="kpi-value" id="dash-kpi-concluido">0</div>
+                    <small class="kpi-sub">finalizados</small>
+                </article>
+            </div>
+            <div class="grid grid-2">
+                <div>
+                    <article class="card">
+                        <h3 class="app-title" style="font-size:16px;margin-top:0;">Status dos Dispositivos</h3>
+                        <canvas id="chart-status" height="200"></canvas>
+                    </article>
+                    <article class="card">
+                        <h3 class="app-title" style="font-size:16px;margin-top:0;">Media por Fase (%)</h3>
+                        <canvas id="chart-fases" height="220"></canvas>
+                    </article>
+                </div>
+                <div>
+                    <article class="card">
+                        <h3 class="app-title" style="font-size:16px;margin-top:0;">Media de Progresso</h3>
+                        <div class="meter" style="margin-top:8px;">
+                            <div id="dash-meter-bar" class="bar" style="width:0%;"></div>
+                            <span id="dash-meter-label">0%</span>
+                        </div>
+                        <div class="mt-3" style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <span class="badge primary" id="dash-kpi-simulacao">Em Simulacao: 0</span>
+                            <span class="badge" id="dash-kpi-standby">Standby: 0</span>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <h3 class="app-title" style="font-size:16px;margin-top:0;">Proximos Marcos</h3>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead><tr><th>Data</th><th>Classe</th><th>Marco</th></tr></thead>
+                                <tbody id="dash-milestones-table"></tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <!-- Setup -->
+        <section id="sub-page-setup" class="sub-page-content active">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <h2 class="app-title" style="margin:0;font-size:18px;">Setup do Projeto - Classes e Milestones</h2>
+                    <div class="center" style="gap:8px;flex-wrap:wrap;">
+                        <label>ProjetoId:</label>
+                        <input type="number" style="width:120px" id="setup-projeto-id" value="1" />
+                        <button class="btn" id="setup-recarregar">Recarregar</button>
+                    </div>
+                </div>
+                <div class="mt-3" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;">
+                    <span class="badge" id="setup-sum-percent">Soma % das Classes: 0%</span>
+                    <small style="color:var(--text)">A soma das classes de um mesmo projeto deve ser menor ou igual a 100%.</small>
+                    <span class="badge" id="setup-status-top"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card card-roomy">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <h3 class="app-title" style="font-size:16px;margin:0;">Classes do Projeto</h3>
+                        <button class="btn btn-primary" id="setup-nova-classe">Criar Classe</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="table comfy">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;"></th>
+                                    <th>Nome</th>
+                                    <th>%</th>
+                                    <th>Horas</th>
+                                    <th>Data base</th>
+                                    <th>Acoes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="setup-classes-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="display:grid;gap:12px;">
+                    <div class="card">
+                        <h3 class="app-title" style="font-size:16px;margin-top:0;" id="setup-form-classe-title">Nova Classe</h3>
+                        <div class="grid grid-2">
+                            <div>
+                                <label>Nome</label>
+                                <input type="text" id="setup-classe-nome" placeholder="Ex.: DR1" />
+                            </div>
+                            <div>
+                                <label>Cor</label>
+                                <input type="color" id="setup-classe-cor" value="#0D9488" />
+                            </div>
+                            <div>
+                                <label>Percentual (%)</label>
+                                <input type="number" min="0" max="100" id="setup-classe-percent" />
+                            </div>
+                            <div>
+                                <label>Horas</label>
+                                <input type="number" min="0" id="setup-classe-horas" />
+                            </div>
+                            <div>
+                                <label>Data base</label>
+                                <input type="date" id="setup-classe-data" />
+                            </div>
+                            <div>
+                                <label>ProjetoId</label>
+                                <input type="number" id="setup-classe-projetoid" />
+                            </div>
+                        </div>
+                        <div class="mt-3" style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" id="setup-classe-salvar">Adicionar</button>
+                            <button class="btn" id="setup-classe-limpar">Limpar</button>
+                            <span class="badge" id="setup-status-classe"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="card" id="setup-milestones-section" style="display:none;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <h3 class="app-title" style="font-size:16px;margin:0;" id="setup-milestones-title">Milestones</h3>
+                            <button class="btn btn-primary" id="setup-milestone-novo">Adicionar Milestone</button>
+                        </div>
+                        <div class="grid grid-3">
+                            <div>
+                                <label>Nome</label>
+                                <input type="text" id="setup-ms-nome" placeholder="Ex.: DR1.1" />
+                            </div>
+                            <div>
+                                <label>Data</label>
+                                <input type="date" id="setup-ms-data" />
+                            </div>
+                            <div>
+                                <label>Ordem</label>
+                                <input type="number" min="0" id="setup-ms-ordem" />
+                            </div>
+                            <div class="mt-3" style="display:flex;align-items:center;gap:10px;">
+                                <input type="checkbox" id="setup-ms-main" />
+                                <label for="setup-ms-main" style="margin:0;">Principal (Main)</label>
+                            </div>
+                        </div>
+                        <div class="mt-3" style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" id="setup-ms-salvar">Adicionar</button>
+                            <button class="btn" id="setup-ms-limpar">Limpar</button>
+                            <span class="badge" id="setup-status-ms"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Descricao Evento -->
+        <section id="sub-page-descricaoevento" class="sub-page-content">
+            <div class="card">
+                <h2 class="app-title" style="font-size:16px;margin:0 0 8px 0;">Descricao do Evento - DR01 / DR02 / DR03</h2>
+                <p class="mt-2" style="margin:0;">
+                    Marque os checks para indicar conclusao das fases de desenho (DR).
+                    Ao marcar, o sistema define 100% e registra a data de hoje.
+                </p>
+                <div class="mt-3" style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <span class="badge ok">OK / 100%</span>
+                    <span class="badge warn">Parcial</span>
+                    <span class="badge err">Atraso</span>
+                </div>
+            </div>
+            <div class="grid" id="desc-evento-lista"></div>
+        </section>
+
+        <!-- Dispositivos -->
+        <section id="sub-page-dispositivos" class="sub-page-content">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <h2 class="app-title" style="font-size:16px;margin:0;">Dispositivos - Visualizacao</h2>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;">
+                        <div>
+                            <label>Classe</label>
+                            <select id="disp-filtro-classe" class="input" style="min-width:160px"></select>
+                        </div>
+                        <div>
+                            <label>Tipo</label>
+                            <select id="disp-filtro-tipo" class="input" style="min-width:140px"></select>
+                        </div>
+                        <div>
+                            <label>Nivel</label>
+                            <select id="disp-filtro-nivel" class="input" style="min-width:120px"></select>
+                        </div>
+                        <div>
+                            <label>Busca</label>
+                            <input type="text" id="disp-filtro-busca" class="input" placeholder="nome, tag, fornecedor, linha..." style="min-width:200px" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div id="dispositivos-grid" class="device-grid"></div>
+            </div>
+        </section>
+
+        <!-- Cronograma -->
+        <section id="sub-page-cronograma" class="sub-page-content">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <h2 class="app-title" style="font-size:18px;margin:0;">Cronograma - Classes e Milestones</h2>
+                    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+                        <div>
+                            <label>Escala</label>
+                            <select id="crono-escala" class="input" style="min-width:140px">
+                                <option value="dia">Dia</option>
+                                <option value="semana" selected>Semana</option>
+                                <option value="mes">Mes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>De</label>
+                            <input type="date" id="crono-start" class="input" />
+                        </div>
+                        <div>
+                            <label>Ate</label>
+                            <input type="date" id="crono-end" class="input" />
+                        </div>
+                        <button class="btn" id="crono-recarregar">Recarregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="overflow:auto;">
+                <div class="gantt">
+                    <div class="gantt-head">
+                        <div class="left">Classe</div>
+                        <div class="right">
+                            <div class="scale" id="crono-scale-ticks"></div>
+                        </div>
+                    </div>
+                    <div id="crono-rows"></div>
+                </div>
+            </div>
+        </section>
+        <!-- Kanban -->
+        <section id="sub-page-kanban" class="sub-page-content">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <h2 class="app-title" style="font-size:16px;margin:0;">Kanban - Status por Dispositivo</h2>
+                    <small>Arraste os cards para alterar o status manual.</small>
+                </div>
+            </div>
+            <div class="grid grid-5">
+                <div class="kanban-col" data-status="NoPrazo">
+                    <div class="kanban-head">No Prazo <span id="kanban-label-prazo">(0)</span></div>
+                    <div id="kanban-list-prazo" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="EmAtraso">
+                    <div class="kanban-head">Em Atraso <span id="kanban-label-atraso">(0)</span></div>
+                    <div id="kanban-list-atraso" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="EmSimulacao">
+                    <div class="kanban-head">Em Simulacao <span id="kanban-label-simulacao">(0)</span></div>
+                    <div id="kanban-list-simulacao" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="Concluido">
+                    <div class="kanban-head">Concluido <span id="kanban-label-concluido">(0)</span></div>
+                    <div id="kanban-list-concluido" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="Standby">
+                    <div class="kanban-head">Standby <span id="kanban-label-standby">(0)</span></div>
+                    <div id="kanban-list-standby" class="kanban-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recurso -->
+        <section id="sub-page-recurso" class="sub-page-content">
+            <div class="grid grid-2">
+                <div class="card">
+                    <h2 class="app-title" style="font-size:16px;margin:0 0 12px 0;">Parametros de Calculo</h2>
+                    <div class="grid grid-2">
+                        <div>
+                            <label>Horas planejadas (total)</label>
+                            <input id="rec-horas-plan" type="number" class="input" value="160" />
+                        </div>
+                        <div>
+                            <label>Horas/dia</label>
+                            <input id="rec-horas-dia" type="number" class="input" value="8" />
+                        </div>
+                        <div>
+                            <label>Ineficiencia (0 a 1)</label>
+                            <input id="rec-ineficiencia" type="number" step="0.01" class="input" value="0.15" />
+                        </div>
+                        <div>
+                            <label>Data de inicio</label>
+                            <input id="rec-data-inicio" type="date" class="input" />
+                        </div>
+                        <div>
+                            <label>Data de termino</label>
+                            <input id="rec-data-fim" type="date" class="input" />
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge" id="rec-dias-uteis">Dias uteis no periodo: 0</span>
+                    </div>
+                    <div class="mt-4" style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <button class="btn btn-primary" id="rec-calcular">Calcular</button>
+                        <span class="badge" id="rec-status-msg"></span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="app-title" style="font-size:16px;margin:0 0 12px 0;">Resultado</h2>
+                    <div class="grid grid-3">
+                        <div class="res-box">
+                            <div class="res-label">Horas planejadas (ajustadas)</div>
+                            <div class="res-value" id="rec-res-horas-ajustadas">0 h</div>
+                        </div>
+                        <div class="res-box">
+                            <div class="res-label">Capacidade / pessoa</div>
+                            <div class="res-value" id="rec-res-capacidade">0 h</div>
+                        </div>
+                        <div class="res-box">
+                            <div class="res-label">Pessoas necessarias</div>
+                            <div class="res-big" id="rec-res-pessoas">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal compacto para compatibilidade com app.js -->
+    <div id="dispositivo-modal-backdrop" class="modal-backdrop"></div>
+    <div id="dispositivo-modal" class="modal"></div>
+
+    <!-- Modal de Inserir Dispositivo -->
+    <div id="frmInserirDispositivo-backdrop" class="modal-backdrop"></div>
+    <form id="frmInserirDispositivo" class="modal">
+        <div class="modal-head">
+            <h3 class="app-title" style="margin:0;">Inserir Dispositivo</h3>
+            <div style="display:flex;gap:8px">
+                <button type="button" class="btn ghost" id="modal-disp-novo">Novo</button>
+                <button type="button" class="btn" id="modal-disp-salvar">Salvar</button>
+                <button type="button" class="btn warn" id="modal-disp-excluir">Excluir</button>
+                <button type="button" class="btn ghost" id="modal-disp-fechar">Fechar</button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-grid-3">
+                <div class="modal-col">
+                    <div>
+                        <label>Classes (selecione uma ou mais)</label>
+                        <select id="modal-disp-classes" class="input" multiple size="5"></select>
+                    </div>
+                    <div class="img-placeholder" id="imgEmpresa-placeholder">imgEmpresa</div>
+                    <div class="img-placeholder" id="imgCliente-placeholder">imgCliente</div>
+                    <input type="file" id="modal-disp-img" accept="image/*" />
+                    <div class="img-placeholder" id="imgDispositivo-preview">Sem imagem</div>
+                    <button type="button" class="btn" id="modal-disp-horas">Horas</button>
+                    <div class="check-item">
+                        <input type="checkbox" id="modal-disp-standby" />
+                        <label for="modal-disp-standby">Cancelado / Stand By</label>
+                    </div>
+
+                    <div>
+                        <label for="modal-disp-dr-list">Selecione em que DR sera apresentado:</label>
+                        <select id="modal-disp-dr-list" multiple style="height: 120px;"></select>
+                    </div>
+                    <div>
+                        <label for="modal-disp-data-2d">Selecione Data do 2D:</label>
+                        <input type="date" id="modal-disp-data-2d" />
+                        <input type="hidden" id="modal-disp-data2d" value="" />
+                    </div>
+                </div>
+
+                <div class="modal-col">
+                    <div>
+                        <label for="modal-disp-nome">Nome Dispositivo</label>
+                        <input type="text" id="modal-disp-nome" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-tipo">Tipo Sigla</label>
+                        <input type="text" id="modal-disp-tipo" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-tag">TAG / Numero Cliente</label>
+                        <input type="text" id="modal-disp-tag" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-op">OP / ST</label>
+                        <input type="text" id="modal-disp-op" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-linha">Linha</label>
+                        <input type="text" id="modal-disp-linha" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-quant">Quant.</label>
+                        <input type="number" id="modal-disp-quant" value="1" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-newretooling">NEW/ ReTooling</label>
+                        <input type="text" id="modal-disp-newretooling" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-produto">Produto</label>
+                        <input type="text" id="modal-disp-produto" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-seedtool">SeedTool / Referencia</label>
+                        <input type="text" id="modal-disp-seedtool" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-nivel">Nivel de Prioridade</label>
+                        <input type="text" id="modal-disp-nivel" />
+                    </div>
+                    <div>
+                        <label for="modal-disp-fornecedor">Fornecedor</label>
+                        <input type="text" id="modal-disp-fornecedor" />
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="chkPlanoSequencia" />
+                        <label for="chkPlanoSequencia">Plano de Sequencia</label>
+                    </div>
+                    <div class="check-item">
+                        <input type="checkbox" id="chk2D" />
+                        <label for="chk2D">2D</label>
+                    </div>
+                    <input type="hidden" id="modal-disp-horas-totais" value="0">
+                    <input type="hidden" id="modal-disp-horas-2d" value="0">
+                </div>
+
+                <div class="modal-col">
+                    <div class="dr-group">
+                        <h4>DR1</h4>
+                        <div class="dr-group-cols">
+                            <div class="check-item">
+                                <input type="checkbox" id="chkERGONOMY" />
+                                <label for="chkERGONOMY">ERGONOMY / ERROR PROOFING</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkSELFASSESSMENT" />
+                                <label for="chkSELFASSESSMENT">SELF-ASSESSMENT</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkWEDGUNS" />
+                                <label for="chkWEDGUNS">WELD GUNS</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkSCANER3D" />
+                                <label for="chkSCANER3D">SCANNER 3D</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkRPS" />
+                                <label for="chkRPS">METODO / RPS / DATUM</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkSEQUECEASBUILT" />
+                                <label for="chkSEQUECEASBUILT">SEQUENCE AS BUILT</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkPRELIMINARYPAYLOAD" />
+                                <label for="chkPRELIMINARYPAYLOAD">PRELIMINARY PAYLOAD</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkPRODUCT3D" />
+                                <label for="chkPRODUCT3D">PRODUCT 3D</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkCHECKLISTDR1" />
+                                <label for="chkCHECKLISTDR1">CHECK LIST</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dr-group">
+                        <h4>DR2</h4>
+                        <div class="dr-group-cols">
+                            <div class="check-item">
+                                <input type="checkbox" id="chkREMARKSFROMDR1" />
+                                <label for="chkREMARKSFROMDR1">REMARKS FROM DR1</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkVALVEBLOCK" />
+                                <label for="chkVALVEBLOCK">VALVE BLOCK</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkADVANCEDBILLOFMATERIAIS" />
+                                <label for="chkADVANCEDBILLOFMATERIAIS">ADVANCED BILL</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkCHECKLISTDR2" />
+                                <label for="chkCHECKLISTDR2">CHECK LIST</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dr-group">
+                        <h4>DR3</h4>
+                        <div class="dr-group-cols">
+                            <div class="check-item">
+                                <input type="checkbox" id="chkREMARKSFROMDR2" />
+                                <label for="chkREMARKSFROMDR2">REMARKS FROM DR2</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkFINALPAYLOAD" />
+                                <label for="chkFINALPAYLOAD">FINAL PAYLOAD</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkFEA" />
+                                <label for="chkFEA">FEA</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkFILEFORCONSTRUCTIONQUOTE" />
+                                <label for="chkFILEFORCONSTRUCTIONQUOTE">FILE FOR QUOTE</label>
+                            </div>
+                            <div class="check-item">
+                                <input type="checkbox" id="chkCHECKLISTDR3" />
+                                <label for="chkCHECKLISTDR3">CHECK LIST</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Modal de Horas -->
+    <div id="horas-modal-backdrop" class="modal-backdrop"></div>
+    <div id="horas-modal" class="modal small">
+        <div class="modal-head">
+            <h3>Horas</h3>
+            <div style="display:flex;gap:8px">
+                <button type="button" class="btn" id="modal-horas-salvar">Salvar</button>
+                <button type="button" class="btn ghost" id="modal-horas-fechar">Fechar</button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div>
+                    <label>Horas Totais</label>
+                    <input id="modal-horas-totais" type="number" class="input" value="0">
+                </div>
+                <div>
+                    <label>Horas 2D</label>
+                    <input id="modal-horas-2d" type="number" class="input" value="0">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="bridge.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('nav.top-nav .nav-link');
+            navLinks.forEach((a) => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showProjetoMecanicoPage(a.dataset.subPage);
+                });
+            });
+            document.getElementById('btn-novo-projeto')?.addEventListener('click', () => {
+                if (typeof showToast === 'function') showToast('Criacao de projeto estara disponivel em breve.', 'warn');
+            });
+            renderTodasPaginas();
+            setupKanbanDropZones();
+            showProjetoMecanicoPage('setup');
+        });
+    </script>
+</body>
+</html>
+
