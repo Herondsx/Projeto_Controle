@@ -1,0 +1,809 @@
+﻿<!DOCTYPE html>
+<!-- Hub SPA Comau: header unico, splash, router de views (home/status/simulacao) e modais compartilhados -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#1F2937" />
+  <title>Comau - Hub</title>
+  <base href="./" />
+  <link rel="preload" href="assets/logo_comau_azul.png" as="image" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Splash corporativa: removida pelo initCorporateSplash em app.js apos exibir 1x por aba -->
+  <div id="splash-overlay" class="splash-overlay">
+    <div class="splash-logo">
+      <img src="assets/logo_comau_azul.png" alt="Comau" />
+    </div>
+    <div class="splash-title">COMAU</div>
+    <div class="splash-sub">Process Simulate - Hub</div>
+  </div>
+
+  <div id="app-shell" class="app-shell">
+    <!-- Header unico: botao back SPA, branding, seletor de projeto e atalho para Home -->
+    <header class="top-header">
+      <div class="brand">
+        <button id="app-back" class="btn btn-icon ghost app-back" type="button" aria-label="Voltar" title="Voltar">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <img src="assets/logo_comau_azul.png" alt="Comau" class="brand-logo" />
+        <div class="brand-info">
+          <strong id="app-title" class="brand-title">Central de Controle</strong>
+          <span id="app-subtitle" class="brand-sub">HTML/JS Preview - Comau</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-icon ghost" id="btn-novo-projeto" title="Criar Novo Projeto">
+             <svg viewBox="0 0 24 24" class="icon" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+
+        <select id="projeto-selector" class="input app-projeto" aria-label="Selecionar projeto" style="max-width:160px"></select>
+
+        <button class="btn btn-icon ghost" id="btn-app-reload" title="Recarregar Sistema">
+             <svg viewBox="0 0 24 24" class="icon" fill="none" stroke="currentColor"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        </button>
+        <a class="btn btn-icon" id="app-home" title="Inicio" href="#home" data-route="home">
+          <svg viewBox="0 0 24 24" class="icon" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path d="M9 22V12h6v10"></path></svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Container do router SPA (ViewRouter em app.js alterna as .view) -->
+    <div id="view-container" class="view-container">
+      <!-- VIEW: Home (hub de entrada, botoes de navegacao e KPIs) -->
+      <section id="view-home" class="view view-active" data-view="home">
+        <main class="app-content">
+          <section class="page-header">
+            <h1>Central de Controle</h1>
+            <div class="center" style="gap:8px;flex-wrap:wrap">
+              <span class="badge">Visao geral dos projetos</span>
+              <button class="btn ghost" id="btn-clear-dados" type="button">Limpar todos os dados</button>
+            </div>
+          </section>
+          <section class="hub-grid">
+            <a class="hub-card" href="#status" data-route="status">
+              <svg class="hub-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+              </svg>
+              <h2>Projetos Mecanicos</h2>
+              <p>Painel de controle de classes, dispositivos, cronograma, dashboard e recurso.</p>
+            </a>
+            <a class="hub-card" href="#simulacao" data-route="simulacao">
+              <svg class="hub-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 13.04L5.83 18.87a.5.5 0 0 1-.74-.55l.8-4.4a.5.5 0 0 0-.16-.5L2.2 9.87a.5.5 0 0 1 .28-.86l4.5-.3a.5.5 0 0 0 .43-.28l1.7-4a.5.5 0 0 1 .9 0l1.7 4a.5.5 0 0 0 .43.28l4.5.3a.5.5 0 0 1 .28.86l-3.53 3.55a.5.5 0 0 0-.16.5l.8 4.4a.5.5 0 0 1-.74.55l-3.3-2.21" />
+                <path d="M18.5 13.04L21.8 14.87a.5.5 0 0 1 .28.86l-3.53 3.55a.5.5 0 0 0-.16.5l.8 4.4a.5.5 0 0 1-.74.55l-3.3-2.21" />
+              </svg>
+              <h2>Gestao de Simulacao</h2>
+              <p>Kanban para liberar dispositivos concluidos e gerenciar robos.</p>
+            </a>
+          </section>
+          <section class="card mt-4">
+            <div class="grid grid-3" id="hub-stats">
+              <div class="kpi">
+                <div class="kpi-title">Projetos</div>
+                <div class="kpi-value" id="hub-kpi-projetos">0</div>
+                <small class="kpi-sub">ativos</small>
+              </div>
+              <div class="kpi">
+                <div class="kpi-title">Dispositivos</div>
+                <div class="kpi-value" id="hub-kpi-dispositivos">0</div>
+                <small class="kpi-sub">cadastrados</small>
+              </div>
+              <div class="kpi">
+                <div class="kpi-title">Proximos Marcos</div>
+                <div class="kpi-value" id="hub-kpi-marcos">0</div>
+                <small class="kpi-sub">nos proximos 30 dias</small>
+              </div>
+            </div>
+          </section>
+        </main>
+      </section>
+      <!-- VIEW: Status (painel de projetos mecanicos com abas internas e modais) -->
+      <section id="view-status" class="view" data-view="status">
+        <nav class="top-nav glass nav-shell">
+          <ul class="menu" tabindex="0">
+            <li><a class="nav-link active" data-sub-page="setup" href="#">Setup</a></li>
+            <li><a class="nav-link" data-sub-page="descricaoevento" href="#">Descricao Evento</a></li>
+            <li><a class="nav-link" data-sub-page="dispositivos" href="#">Dispositivos</a></li>
+            <li><a class="nav-link" data-sub-page="cronograma" href="#">Cronograma</a></li>
+            <li><a class="nav-link" data-sub-page="dashboard" href="#">Dashboard</a></li>
+            <li><a class="nav-link" data-sub-page="kanban" href="#">Kanban</a></li>
+            <li><a class="nav-link" data-sub-page="recurso" href="#">Recurso</a></li>
+          </ul>
+          <span class="inkbar" aria-hidden="true"></span>
+        </nav>
+
+        <main class="page page-shell">
+          <div id="cs-pages" class="cs-pages">
+            <section id="cs-page-dashboard" class="page" data-page="dashboard">
+              <div class="card">
+                <h2 class="app-title" style="margin:0;">Dashboard - Visao Geral</h2>
+              </div>
+              <div class="grid grid-4">
+                <article class="card kpi">
+                  <div class="kpi-title">Dispositivos</div>
+                  <div class="kpi-value" id="dash-kpi-total">0</div>
+                  <small class="kpi-sub">total</small>
+                </article>
+                <article class="card kpi">
+                  <div class="kpi-title">No Prazo</div>
+                  <div class="kpi-value" id="dash-kpi-prazo">0</div>
+                  <small class="kpi-sub">andamento ok</small>
+                </article>
+                <article class="card kpi">
+                  <div class="kpi-title">Em Atraso</div>
+                  <div class="kpi-value" id="dash-kpi-atraso">0</div>
+                  <small class="kpi-sub">precisam de atencao</small>
+                </article>
+                <article class="card kpi">
+                  <div class="kpi-title">Concluidos</div>
+                  <div class="kpi-value" id="dash-kpi-concluido">0</div>
+                  <small class="kpi-sub">finalizados</small>
+                </article>
+              </div>
+              <div class="grid grid-2">
+                <div>
+                  <article class="card">
+                    <h3 class="app-title" style="font-size:16px;margin-top:0;">Status dos Dispositivos</h3>
+                    <canvas id="chart-status" height="200"></canvas>
+                  </article>
+                  <article class="card">
+                    <h3 class="app-title" style="font-size:16px;margin-top:0;">Media por Fase (%)</h3>
+                    <canvas id="chart-fases" height="220"></canvas>
+                  </article>
+                </div>
+                <div>
+                  <article class="card">
+                    <h3 class="app-title" style="font-size:16px;margin-top:0;">Media de Progresso</h3>
+                    <div class="meter" style="margin-top:8px;">
+                      <div id="dash-meter-bar" class="bar" style="width:0%;"></div>
+                      <span id="dash-meter-label">0%</span>
+                    </div>
+                    <div class="mt-3" style="display:flex;gap:8px;flex-wrap:wrap;">
+                      <span class="badge primary" id="dash-kpi-simulacao">Em Simulacao: 0</span>
+                      <span class="badge" id="dash-kpi-standby">Standby: 0</span>
+                    </div>
+                  </article>
+                  <article class="card">
+                    <h3 class="app-title" style="font-size:16px;margin-top:0;">Proximos Marcos</h3>
+                    <div class="table-wrap">
+                      <table class="table">
+                        <thead><tr><th>Data</th><th>Classe</th><th>Marco</th></tr></thead>
+                        <tbody id="dash-milestones-table"></tbody>
+                      </table>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <section id="cs-page-setup" class="page active" data-page="setup">
+              <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 20px;">
+                     <div>
+                        <h2 class="app-title" style="margin:0; font-size:20px;">Dados do Projeto</h2>
+                        <small class="muted">Informações gerais e configuração</small>
+                     </div>
+                     <div style="text-align:center;">
+                         <div id="setup-client-logo-preview" style="width:60px; height:60px; background:#f3f4f6; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #e5e7eb;">
+                             <span style="font-size:10px; color:#9ca3af;">Logo</span>
+                         </div>
+                         <select id="setup-client-select" class="input" style="font-size:11px; padding:4px;">
+                             <option value="">Selecione Cliente</option>
+                             <option value="fiat">Fiat</option>
+                             <option value="jeep">Jeep</option>
+                             <option value="ram">Ram</option>
+                             <option value="stellantis">Stellantis</option>
+                             <option value="comau">Comau</option>
+                         </select>
+                     </div>
+                </div>
+
+                <div class="project-data-grid">
+                    <div class="input-group-clean">
+                        <label>Centro de Custo</label>
+                        <input type="text" id="pd-cc" class="input-clean" placeholder="Ex: 123456">
+                    </div>
+                    <div class="input-group-clean">
+                        <label>Cliente</label>
+                        <input type="text" id="pd-cliente" class="input-clean" placeholder="Nome do Cliente">
+                    </div>
+                    <div class="input-group-clean">
+                        <label>Planta</label>
+                        <input type="text" id="pd-planta" class="input-clean" placeholder="Local da Planta">
+                    </div>
+                    <div class="grid grid-2">
+                        <div class="input-group-clean">
+                            <label>Projeto</label>
+                            <input type="text" id="pd-projeto" class="input-clean" placeholder="Nome do Projeto">
+                        </div>
+                        <div class="input-group-clean">
+                            <label>Área</label>
+                            <input type="text" id="pd-area" class="input-clean" placeholder="Body Shop / Assembly">
+                        </div>
+                    </div>
+                    <div class="grid grid-2">
+                         <div class="input-group-clean">
+                            <label>Design Leader</label>
+                            <input type="text" id="pd-dl" class="input-clean">
+                        </div>
+                        <div class="input-group-clean">
+                            <label>Technical Leader</label>
+                            <input type="text" id="pd-tl" class="input-clean">
+                        </div>
+                    </div>
+                    <div style="text-align:right; margin-top:10px;">
+                        <button class="btn btn-primary btn-sm" id="btn-save-project-data">Salvar Dados do Projeto</button>
+                    </div>
+                </div>
+              </div>
+
+              <div class="card mt-4">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div>
+                        <h3 class="app-title" style="font-size:18px; margin:0;">Milestones do Projeto</h3>
+                        <small class="muted">Antigas "Classes". Defina as entregas principais (DR1, DR2, etc).</small>
+                    </div>
+                    <button class="btn btn-primary" id="btn-toggle-milestone-form">+ Novo Milestone</button>
+                  </div>
+
+                  <div id="setup-form-container">
+                       <h4 style="margin:0 0 12px 0; font-size:14px;">Cadastrar / Editar Milestone</h4>
+                       <div class="grid grid-4">
+                          <div>
+                            <label style="font-size:11px;">Nome (Ex: DR1)</label>
+                            <input type="text" id="setup-classe-nome" class="input" style="width:100%" />
+                          </div>
+                          <div>
+                            <label style="font-size:11px;">Cor</label>
+                            <input type="color" id="setup-classe-cor" value="#0D9488" style="width:100%; height:32px;" />
+                          </div>
+                          <div>
+                            <label style="font-size:11px;">Percentual (%)</label>
+                            <input type="number" min="0" max="100" id="setup-classe-percent" class="input" style="width:100%" />
+                          </div>
+                          <div>
+                            <label style="font-size:11px;">Data Base</label>
+                            <input type="date" id="setup-classe-data" class="input" style="width:100%" />
+                          </div>
+                       </div>
+                       <div class="mt-3" style="display:flex; gap:8px;">
+                          <button class="btn btn-primary" id="setup-classe-salvar">Salvar Milestone</button>
+                          <button class="btn ghost" id="setup-classe-cancelar">Cancelar</button>
+                       </div>
+                  </div>
+
+                  <div class="table-wrap mt-3">
+                    <table class="table comfy">
+                      <thead>
+                        <tr>
+                          <th style="width:36px;">Cor</th>
+                          <th>Milestone</th>
+                          <th>Progresso (%)</th>
+                          <th>Data Base</th>
+                          <th style="text-align:right;">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody id="setup-classes-table"></tbody>
+                    </table>
+                  </div>
+
+                  <div class="mt-3" style="display:flex; justify-content:flex-end;">
+                     <span class="badge" id="setup-sum-percent">Total Progresso: 0%</span>
+                  </div>
+              </div>
+            </section>
+
+            <section id="cs-page-descricaoevento" class="page" data-page="descricaoevento">
+              <div class="card">
+                <h2 class="app-title" style="font-size:16px;margin:0 0 8px 0;">Descricao do Evento - DR01 / DR02 / DR03</h2>
+                <p class="mt-2" style="margin:0;">
+                  Marque os checks para indicar conclusao das fases de desenho (DR).
+                  Ao marcar, o sistema define 100% e registra a data de hoje.
+                </p>
+                <div class="mt-3" style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <span class="badge ok">OK / 100%</span>
+                  <span class="badge warn">Parcial</span>
+                  <span class="badge err">Atraso</span>
+                </div>
+              </div>
+              <div class="grid" id="desc-evento-lista"></div>
+            </section>
+
+            <section id="cs-page-dispositivos" class="page" data-page="dispositivos">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <h2 class="app-title" style="font-size:16px;margin:0;">Dispositivos - Visualizacao</h2>
+                    <button class="btn btn-primary" id="btn-add-dispositivo" type="button">Adicionar Dispositivo</button>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;">
+                    <div>
+                      <label>Classe</label>
+                      <select id="disp-filtro-classe" class="input" style="min-width:160px"></select>
+                    </div>
+                    <div>
+                      <label>Tipo</label>
+                      <select id="disp-filtro-tipo" class="input" style="min-width:140px"></select>
+                    </div>
+                    <div>
+                      <label>Nivel</label>
+                      <select id="disp-filtro-nivel" class="input" style="min-width:120px"></select>
+                    </div>
+                    <div>
+                      <label>Busca</label>
+                      <input type="text" id="disp-filtro-busca" class="input" placeholder="nome, tag, fornecedor, linha..." style="min-width:200px" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div id="dispositivos-grid" class="device-grid"></div>
+              </div>
+            </section>
+            <section id="cs-page-cronograma" class="page" data-page="cronograma">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <h2 class="app-title" style="font-size:18px;margin:0;">Cronograma - Classes e Milestones</h2>
+                  <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+                    <div>
+                      <label>Escala</label>
+                      <select id="crono-escala" class="input" style="min-width:140px">
+                        <option value="dia">Dia</option>
+                        <option value="semana" selected>Semana</option>
+                        <option value="mes">Mes</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label>De</label>
+                      <input type="date" id="crono-start" class="input" />
+                    </div>
+                    <div>
+                      <label>Ate</label>
+                      <input type="date" id="crono-end" class="input" />
+                    </div>
+                    <button class="btn" id="crono-recarregar">Recarregar</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card" style="overflow:auto;">
+                <div class="gantt">
+                  <div class="gantt-head">
+                    <div class="left">Classe</div>
+                    <div class="right">
+                      <div class="scale" id="crono-scale-ticks"></div>
+                    </div>
+                  </div>
+                  <div id="crono-rows"></div>
+                </div>
+              </div>
+            </section>
+
+            <section id="cs-page-kanban" class="page" data-page="kanban">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <h2 class="app-title" style="font-size:16px;margin:0;">Kanban - Status por Dispositivo</h2>
+                  <small>Arraste os cards para alterar o status manual.</small>
+                </div>
+              </div>
+              <div class="grid grid-5">
+                <div class="kanban-col" data-status="NoPrazo">
+                  <div class="kanban-head">No Prazo <span id="kanban-label-prazo">(0)</span></div>
+                  <div id="kanban-list-prazo" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="EmAtraso">
+                  <div class="kanban-head">Em Atraso <span id="kanban-label-atraso">(0)</span></div>
+                  <div id="kanban-list-atraso" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="EmSimulacao">
+                  <div class="kanban-head">Em Simulacao <span id="kanban-label-simulacao">(0)</span></div>
+                  <div id="kanban-list-simulacao" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="Concluido">
+                  <div class="kanban-head">Concluido <span id="kanban-label-concluido">(0)</span></div>
+                  <div id="kanban-list-concluido" class="kanban-list"></div>
+                </div>
+                <div class="kanban-col" data-status="Standby">
+                  <div class="kanban-head">Standby <span id="kanban-label-standby">(0)</span></div>
+                  <div id="kanban-list-standby" class="kanban-list"></div>
+                </div>
+              </div>
+            </section>
+
+            <section id="cs-page-recurso" class="page" data-page="recurso">
+              <div class="grid grid-2">
+                <div class="card">
+                  <h2 class="app-title" style="font-size:16px;margin:0 0 12px 0;">Parametros de Calculo</h2>
+                  <div class="grid grid-2">
+                    <div>
+                      <label>Horas planejadas (total)</label>
+                      <input id="rec-horas-plan" type="number" class="input" value="160" />
+                    </div>
+                    <div>
+                      <label>Horas/dia</label>
+                      <input id="rec-horas-dia" type="number" class="input" value="8" />
+                    </div>
+                    <div>
+                      <label>Ineficiencia (0 a 1)</label>
+                      <input id="rec-ineficiencia" type="number" step="0.01" class="input" value="0.15" />
+                    </div>
+                    <div>
+                      <label>Data de inicio</label>
+                      <input id="rec-data-inicio" type="date" class="input" />
+                    </div>
+                    <div>
+                      <label>Data de termino</label>
+                      <input id="rec-data-fim" type="date" class="input" />
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <span class="badge" id="rec-dias-uteis">Dias uteis no periodo: 0</span>
+                  </div>
+                  <div class="mt-4" style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button class="btn btn-primary" id="rec-calcular">Calcular</button>
+                    <span class="badge" id="rec-status-msg"></span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h2 class="app-title" style="font-size:16px;margin:0 0 12px 0;">Resultado</h2>
+                  <div class="grid grid-3">
+                    <div class="res-box">
+                      <div class="res-label">Horas planejadas (ajustadas)</div>
+                      <div class="res-value" id="rec-res-horas-ajustadas">0 h</div>
+                    </div>
+                    <div class="res-box">
+                      <div class="res-label">Capacidade / pessoa</div>
+                      <div class="res-value" id="rec-res-capacidade">0 h</div>
+                    </div>
+                    <div class="res-box">
+                      <div class="res-label">Pessoas necessarias</div>
+                      <div class="res-big" id="rec-res-pessoas">0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <!-- Modais do modulo de Status (dispositivo, inserir/editar, horas) -->
+        <div id="dispositivo-modal-backdrop" class="modal-backdrop"></div>
+        <div id="dispositivo-modal" class="modal"></div>
+
+        <div id="frmInserirDispositivo-backdrop" class="modal-backdrop"></div>
+        <form id="frmInserirDispositivo" class="modal">
+          <div class="modal-head">
+            <h3 class="app-title" style="margin:0;">Inserir Dispositivo</h3>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn ghost" id="modal-disp-novo">Novo</button>
+              <button type="button" class="btn" id="modal-disp-salvar">Salvar</button>
+              <button type="button" class="btn warn" id="modal-disp-excluir">Excluir</button>
+              <button type="button" class="btn ghost" id="modal-disp-fechar">Fechar</button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="modal-grid-3">
+              <div class="modal-col">
+  <div style="display:flex; gap:16px; margin-bottom:20px; align-items: flex-end; border-bottom:1px dashed #e2e8f0; padding-bottom:16px;">
+      <div style="flex:1; text-align:center;">
+          <label style="font-size:10px; font-weight:bold; color:#94a3b8; text-transform:uppercase; margin-bottom:6px; display:block;">Comau</label>
+          <img id="modal-img-empresa" src="" style="width:100%; height:80px; object-fit:contain;">
+      </div>
+      <div style="flex:1; text-align:center;">
+          <label style="font-size:10px; font-weight:bold; color:#94a3b8; text-transform:uppercase; margin-bottom:6px; display:block;">Cliente</label>
+          <img id="modal-img-cliente" src="" style="width:100%; height:80px; object-fit:contain;">
+      </div>
+  </div>
+
+  <div>
+    <label>Classes (selecione uma ou mais)</label>
+    <select id="modal-disp-classes" class="input" multiple size="5" style="min-height:100px;"></select>
+  </div>
+  
+  <div style="margin-top:12px;">
+      <label>Imagem do Dispositivo</label>
+      <input type="file" id="modal-disp-img" accept="image/*" />
+      <div class="img-placeholder" id="imgDispositivo-preview" style="height:140px; display:flex; align-items:center; justify-content:center; margin-top:6px;">Sem imagem</div>
+  </div>
+
+  <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+      <button type="button" class="btn btn-sm" id="modal-disp-horas" style="flex:1;">Definir Horas</button>
+      <div class="check-item" style="margin:0;">
+        <input type="checkbox" id="modal-disp-standby" />
+        <label for="modal-disp-standby" style="font-weight:600; color:#ef4444;">Stand By / Cancelado</label>
+      </div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <label for="modal-disp-data-2d">Data Prevista 2D:</label>
+    <input type="date" id="modal-disp-data-2d" class="input" style="width:100%;" />
+    <input type="hidden" id="modal-disp-data2d" value="" />
+  </div>
+</div>
+
+              <div class="modal-col">
+                <div>
+                  <label for="modal-disp-nome">Nome Dispositivo</label>
+                  <input type="text" id="modal-disp-nome" />
+                </div>
+                <div>
+                  <label for="modal-disp-tipo">Tipo</label>
+                  <select id="modal-disp-tipo" class="input"></select>
+                </div>
+                <div>
+                  <label for="modal-disp-tiposigla">Tipo Sigla</label>
+                  <input type="text" id="modal-disp-tiposigla" class="input" />
+                </div>
+                <div>
+                  <label for="modal-disp-tag">TAG / Numero Cliente</label>
+                  <input type="text" id="modal-disp-tag" />
+                </div>
+                <div>
+                  <label for="modal-disp-op">OP / ST</label>
+                  <input type="text" id="modal-disp-op" />
+                </div>
+                <div>
+                  <label for="modal-disp-linha">Linha</label>
+                  <input type="text" id="modal-disp-linha" />
+                </div>
+                <div>
+                  <label for="modal-disp-quant">Quant.</label>
+                  <input type="number" id="modal-disp-quant" value="1" />
+                </div>
+                <div>
+                  <label for="modal-disp-newretooling">NEW/ ReTooling</label>
+                  <input type="text" id="modal-disp-newretooling" />
+                </div>
+                <div>
+                  <label for="modal-disp-produto">Produto</label>
+                  <input type="text" id="modal-disp-produto" />
+                </div>
+                <div>
+                  <label for="modal-disp-seedtool">SeedTool / Referencia</label>
+                  <input type="text" id="modal-disp-seedtool" />
+                </div>
+                <div>
+                  <label for="modal-disp-nivel">Nivel de Prioridade</label>
+                  <select id="modal-disp-nivel" class="input"></select>
+                </div>
+                <div>
+                  <label for="modal-disp-fornecedor">Fornecedor</label>
+                  <input type="text" id="modal-disp-fornecedor" />
+                </div>
+                <div class="check-item">
+                  <input type="checkbox" id="chkPlanoSequencia" />
+                  <label for="chkPlanoSequencia">Plano de Sequencia</label>
+                </div>
+                <div class="check-item">
+                  <input type="checkbox" id="chk2D" />
+                  <label for="chk2D">2D</label>
+                </div>
+                <input type="hidden" id="modal-disp-horas-totais" value="0">
+                <input type="hidden" id="modal-disp-horas-2d" value="0">
+              </div>
+
+              <div class="modal-col">
+                <div class="dr-group">
+                  <h4>DR1</h4>
+                  <div class="dr-group-cols">
+                    <div class="check-item">
+                      <input type="checkbox" id="chkERGONOMY" />
+                      <label for="chkERGONOMY">ERGONOMY / ERROR PROOFING</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkSELFASSESSMENT" />
+                      <label for="chkSELFASSESSMENT">SELF-ASSESSMENT</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkWEDGUNS" />
+                      <label for="chkWEDGUNS">WELD GUNS</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkSCANER3D" />
+                      <label for="chkSCANER3D">SCANNER 3D</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkRPS" />
+                      <label for="chkRPS">METODO / RPS / DATUM</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkSEQUECEASBUILT" />
+                      <label for="chkSEQUECEASBUILT">SEQUENCE AS BUILT</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkPRELIMINARYPAYLOAD" />
+                      <label for="chkPRELIMINARYPAYLOAD">PRELIMINARY PAYLOAD</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkPRODUCT3D" />
+                      <label for="chkPRODUCT3D">PRODUCT 3D</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkCHECKLISTDR1" />
+                      <label for="chkCHECKLISTDR1">CHECK LIST</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="dr-group">
+                  <h4>DR2</h4>
+                  <div class="dr-group-cols">
+                    <div class="check-item">
+                      <input type="checkbox" id="chkREMARKSFROMDR1" />
+                      <label for="chkREMARKSFROMDR1">REMARKS FROM DR1</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkVALVEBLOCK" />
+                      <label for="chkVALVEBLOCK">VALVE BLOCK</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkADVANCEDBILLOFMATERIAIS" />
+                      <label for="chkADVANCEDBILLOFMATERIAIS">ADVANCED BILL</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkCHECKLISTDR2" />
+                      <label for="chkCHECKLISTDR2">CHECK LIST</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="dr-group">
+                  <h4>DR3</h4>
+                  <div class="dr-group-cols">
+                    <div class="check-item">
+                      <input type="checkbox" id="chkREMARKSFROMDR2" />
+                      <label for="chkREMARKSFROMDR2">REMARKS FROM DR2</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkFINALPAYLOAD" />
+                      <label for="chkFINALPAYLOAD">FINAL PAYLOAD</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkFEA" />
+                      <label for="chkFEA">FEA</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkFILEFORCONSTRUCTIONQUOTE" />
+                      <label for="chkFILEFORCONSTRUCTIONQUOTE">FILE FOR QUOTE</label>
+                    </div>
+                    <div class="check-item">
+                      <input type="checkbox" id="chkCHECKLISTDR3" />
+                      <label for="chkCHECKLISTDR3">CHECK LIST</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div id="horas-modal-backdrop" class="modal-backdrop"></div>
+        <div id="horas-modal" class="modal small">
+          <div class="modal-head">
+            <h3>Horas</h3>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn" id="modal-horas-salvar">Salvar</button>
+              <button type="button" class="btn ghost" id="modal-horas-fechar">Fechar</button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label>Horas Totais</label>
+                <input id="modal-horas-totais" type="number" class="input" value="0">
+              </div>
+              <div>
+                <label>Horas 2D</label>
+                <input id="modal-horas-2d" type="number" class="input" value="0">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- VIEW: Simulacao (kanban de liberacao + modal de detalhe) -->
+      <section id="view-simulacao" class="view" data-view="simulacao">
+        <main class="page page-shell" id="sim-root">
+          <section class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+              <div>
+                <h2 class="app-title" style="margin:0;font-size:18px;">Kanban de Liberacao</h2>
+                <p class="mt-2" style="margin:6px 0 0 0;">
+                  Arraste os cards entre as colunas para marcar como <strong>Para liberar</strong> ou <strong>Liberado</strong>.
+                  Clique em um card para ver detalhes.
+                </p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                <span class="badge primary">Somente itens em Simulacao/Concluido aparecem aqui</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid grid-2">
+            <div class="kanban-col" data-status="para-liberar">
+              <div class="kanban-head">
+                Para liberar <span id="sim-label-liberar">(0)</span>
+              </div>
+              <div id="sim-list-liberar" class="kanban-list"></div>
+            </div>
+
+            <div class="kanban-col" data-status="liberado">
+              <div class="kanban-head">
+                Liberado <span id="sim-label-liberado">(0)</span>
+              </div>
+              <div id="sim-list-liberado" class="kanban-list"></div>
+            </div>
+          </section>
+
+          <section class="card mt-4">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+              <div>
+                <h2 class="app-title" style="margin:0;font-size:16px;">Robos (rapido)</h2>
+                <small class="muted">Entrada simples para registrar/lembrar nomes (toast).</small>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;">
+                <div>
+                  <label for="sim-robo-nome">Nome do robo</label>
+                  <input id="sim-robo-nome" class="input" type="text" placeholder="Ex.: RB-01 / Station 20" style="min-width:260px;" />
+                </div>
+                <button class="btn btn-primary" id="sim-add-robo" type="button">Adicionar</button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <div id="sim-detail-backdrop" class="modal-backdrop"></div>
+        <div id="sim-detail" class="modal">
+          <div class="modal-head">
+            <h3 class="app-title" style="margin:0;">Detalhe do Dispositivo</h3>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn ghost" id="sim-detail-close">Fechar</button>
+            </div>
+          </div>
+          <div class="modal-body" id="sim-detail-body"></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="modal-projeto-backdrop" class="modal-backdrop" style="z-index: 200;"></div>
+    <div id="modal-projeto" class="modal small" style="z-index: 201;">
+      <div class="modal-head">
+        <h3 class="app-title">Novo Projeto</h3>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--text); margin-bottom:12px;">
+          Para acessar a central, é necessário criar um projeto base.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <label>Nome do Projeto</label>
+            <input type="text" id="new-proj-nome" class="input" style="width:100%" placeholder="Ex: Projeto Fiat Pulse" />
+          </div>
+          <div class="grid grid-2" style="gap:10px;">
+             <div>
+                <label>Data Início</label>
+                <input type="date" id="new-proj-ini" class="input" style="width:100%" />
+             </div>
+             <div>
+                <label>Data Fim (Estimada)</label>
+                <input type="date" id="new-proj-fim" class="input" style="width:100%" />
+             </div>
+          </div>
+        </div>
+        <div class="mt-4" style="text-align:right;">
+           <button class="btn btn-primary" id="btn-create-project-confirm">Criar Projeto</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast unico compartilhado entre as views -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <!-- Scripts globais: bridge.js prepara store, app.js cuida de estado/rotas/render -->
+  <script src="bridge.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
