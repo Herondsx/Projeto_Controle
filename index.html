@@ -113,23 +113,60 @@
       </section>
       <!-- VIEW: Status (painel de projetos mecanicos com abas internas e modais) -->
       <section id="view-status" class="view" data-view="status">
-        <nav class="top-nav glass nav-shell" id="status-nav">
-          <button class="mobile-nav-trigger" id="mobile-nav-btn">
-            <span id="mobile-nav-current">Navegação</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-          </button>
+        <div class="mobile-nav-header glass nav-shell">
+            <button class="mobile-drawer-trigger" onclick="toggleDrawer()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                <span id="mobile-nav-title">Menu</span>
+            </button>
+            <nav class="top-nav desktop-only">
+                <ul class="menu" tabindex="0">
+                    <li><a class="nav-link active" data-sub-page="setup" href="#">Setup</a></li>
+                    <li><a class="nav-link" data-sub-page="descricaoevento" href="#">Descrição Evento</a></li>
+                    <li><a class="nav-link" data-sub-page="dispositivos" href="#">Dispositivos</a></li>
+                    <li><a class="nav-link" data-sub-page="cronograma" href="#">Cronograma</a></li>
+                    <li><a class="nav-link" data-sub-page="dashboard" href="#">Dashboard</a></li>
+                    <li><a class="nav-link" data-sub-page="kanban" href="#">Kanban</a></li>
+                    <li><a class="nav-link" data-sub-page="recurso" href="#">Recurso</a></li>
+                </ul>
+                <span class="inkbar" aria-hidden="true"></span>
+            </nav>
+        </div>
 
-          <ul class="menu" tabindex="0">
-            <li><a class="nav-link active" data-sub-page="setup" href="#">Setup</a></li>
-            <li><a class="nav-link" data-sub-page="descricaoevento" href="#">Descrição Evento</a></li>
-            <li><a class="nav-link" data-sub-page="dispositivos" href="#">Dispositivos</a></li>
-            <li><a class="nav-link" data-sub-page="cronograma" href="#">Cronograma</a></li>
-            <li><a class="nav-link" data-sub-page="dashboard" href="#">Dashboard</a></li>
-            <li><a class="nav-link" data-sub-page="kanban" href="#">Kanban</a></li>
-            <li><a class="nav-link" data-sub-page="recurso" href="#">Recurso</a></li>
-          </ul>
-          <span class="inkbar" aria-hidden="true"></span>
-        </nav>
+        <div id="drawer-overlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+        <aside id="drawer-menu" class="drawer-panel">
+            <div class="drawer-header">
+                <div class="drawer-title">Navegação</div>
+                <button class="drawer-close" onclick="toggleDrawer()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="drawer-content">
+                <button class="drawer-item active" data-sub-page="setup" onclick="mobileNavigate('setup')">
+                    <span class="icon">⚙️</span> Setup
+                </button>
+                <button class="drawer-item" data-sub-page="descricaoevento" onclick="mobileNavigate('descricaoevento')">
+                    <span class="icon">📝</span> Descrição Evento
+                </button>
+                <button class="drawer-item" data-sub-page="dispositivos" onclick="mobileNavigate('dispositivos')">
+                    <span class="icon">🔧</span> Dispositivos
+                </button>
+                <button class="drawer-item" data-sub-page="cronograma" onclick="mobileNavigate('cronograma')">
+                    <span class="icon">📅</span> Cronograma
+                </button>
+                <button class="drawer-item" data-sub-page="dashboard" onclick="mobileNavigate('dashboard')">
+                    <span class="icon">📊</span> Dashboard
+                </button>
+                <button class="drawer-item" data-sub-page="kanban" onclick="mobileNavigate('kanban')">
+                    <span class="icon">📋</span> Kanban
+                </button>
+                <button class="drawer-item" data-sub-page="recurso" onclick="mobileNavigate('recurso')">
+                    <span class="icon">👥</span> Recurso
+                </button>
+            </div>
+            <div class="drawer-footer">
+                <small>Comau System v2.0</small>
+            </div>
+        </aside>
 
         <main class="page page-shell">
           <div id="cs-pages" class="cs-pages">
