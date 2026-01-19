@@ -1500,35 +1500,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     ViewRouter.init();
 });
 
-// Lógica de Navegação Mobile (Menu Dropdown)
-document.addEventListener("DOMContentLoaded", () => {
-    const navShell = document.getElementById("status-nav");
-    const navBtn = document.getElementById("mobile-nav-btn");
-    const menuItems = document.querySelectorAll(".top-nav .nav-link");
+// Controle do Drawer
+window.toggleDrawer = () => {
+    const overlay = document.getElementById("drawer-overlay");
+    const panel = document.getElementById("drawer-menu");
+    overlay?.classList.toggle("open");
+    panel?.classList.toggle("open");
+};
 
-    if (navBtn && navShell) {
-        navBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            navShell.classList.toggle("is-open");
-        });
-        document.addEventListener("click", (e) => {
-            if (!navShell.contains(e.target)) {
-                navShell.classList.remove("is-open");
-            }
-        });
-        menuItems.forEach(item => {
-            item.addEventListener("click", () => navShell.classList.remove("is-open"));
-        });
+// Navegação via Drawer
+window.mobileNavigate = (target) => {
+    showProjetoMecanicoPage(target);
+    window.toggleDrawer();
+    document.querySelectorAll(".drawer-item").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.subPage === target);
+    });
+    const title = document.getElementById("mobile-nav-title");
+    if (title) {
+        const names = { setup: "Setup", descricaoevento: "Descrição Evento", dispositivos: "Dispositivos", cronograma: "Cronograma", dashboard: "Dashboard", kanban: "Kanban", recurso: "Recurso" };
+        title.textContent = names[target] || "Menu";
     }
-});
+};
 
-// Hook para atualizar o texto do botão mobile quando a aba muda
 const originalShowPage = window.showProjetoMecanicoPage;
 window.showProjetoMecanicoPage = function(target, opts) {
     if (originalShowPage) originalShowPage(target, opts);
-    const label = document.getElementById("mobile-nav-current");
-    const link = document.querySelector(`.nav-link[data-sub-page="${target}"]`);
-    if (label && link) {
-        label.textContent = link.textContent;
+    document.querySelectorAll(".drawer-item").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.subPage === target);
+    });
+    const title = document.getElementById("mobile-nav-title");
+    if (title) {
+        const activeBtn = document.querySelector(`.drawer-item[data-sub-page="${target}"]`);
+        if (activeBtn) title.textContent = activeBtn.textContent.trim().replace(/^.. /, "");
     }
 };
