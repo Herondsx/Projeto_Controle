@@ -2351,3 +2351,238 @@ select[size]{
     box-shadow var(--expando-ms) var(--expando-ease) !important;
   will-change: transform, border-radius, box-shadow;
 }
+ 
+/* =========================================================
+   PATCH FIX: Barra Azul Atravessando a Tela
+   ========================================================= */
+
+/* 1. Define o limite (A Prisão da barra) */
+nav.top-nav {
+    position: relative !important;
+    z-index: 20;
+    display: inline-flex !important;
+    height: auto !important;
+    border-radius: 999px;
+}
+
+/* 2. Força a barra a respeitar a altura do menu */
+.inkbar {
+    top: 4px !important;
+    bottom: 4px !important;
+    max-height: 45px !important;
+    z-index: -1 !important;
+}
+
+/* 3. Ajuste fino para os links ficarem acima da barra */
+.nav-link {
+    z-index: 5 !important;
+    position: relative;
+}
+
+/* =========================================================
+   PATCH FINAL: Navegação Desktop Precisa & Mobile Clean
+   ========================================================= */
+
+/* --- DESKTOP: Ajuste Fino da Barra Azul --- */
+@media (min-width: 769px) {
+    .top-nav.nav-shell {
+        display: inline-flex !important;
+        margin: 12px auto 20px auto !important;
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        width: fit-content !important;
+        max-width: 90vw !important;
+        justify-content: center !important;
+        padding: 5px 6px !important;
+    }
+
+    .top-nav .menu {
+        display: flex !important;
+        justify-content: center !important;
+        width: auto !important;
+    }
+
+    .inkbar {
+        top: 5px !important;
+        bottom: 5px !important;
+        height: auto !important;
+        z-index: 0 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .nav-link {
+        position: relative;
+        z-index: 2 !important;
+        background: transparent !important;
+    }
+}
+
+/* --- MOBILE: Limpeza Total (Apenas Menu Hambúrguer) --- */
+@media (max-width: 768px) {
+    
+    .top-nav.nav-shell, 
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-nav-header {
+        display: flex !important;
+        align-items: center;
+        width: 100% !important;
+        padding: 12px 16px !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e5e7eb;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        margin: 0 0 16px 0 !important; 
+        border-radius: 0 !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+
+    .mobile-drawer-trigger {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #1f2937;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .drawer-panel {
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 280px !important;
+        border-radius: 0 !important;
+        border-right: 1px solid #e5e7eb;
+    }
+}
+
+/* --- CORREÇÃO: Navegação Desktop Centralizada --- */
+@media (min-width: 769px) {
+    .top-nav.nav-shell {
+        margin: 12px auto 20px auto !important;
+        width: fit-content !important;
+        min-width: 600px;
+        max-width: 90vw;
+        display: flex !important;
+        justify-content: center !important;
+        position: relative;
+        z-index: 20;
+    }
+
+    .top-nav .menu {
+        justify-content: center !important;
+        width: auto !important;
+    }
+}
+
+/* =========================================================
+   PATCH: Mobile Otimizado (Inspirado em App Nativo)
+   ========================================================= */
+
+@media (max-width: 768px) {
+    
+    /* 1. INPUTS ERGONÔMICOS (Toque Fácil) */
+    .input,
+    .input-clean,
+    .input-dense,
+    select,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
+        font-size: 16px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        padding: 0 16px !important;
+        width: 100% !important;
+        border-radius: 12px !important;
+        background-color: #ffffff !important;
+        border: 1px solid #e5e7eb !important;
+        margin-bottom: 16px !important;
+    }
+
+    /* Labels maiores e mais visíveis */
+    label, .input-group-clean label, .vertical-input-group label {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        margin-bottom: 8px !important;
+        display: block !important;
+    }
+
+    /* 2. LAYOUT EM COLUNA ÚNICA */
+    .grid-2, .grid-3, .grid-4, .grid-5, .dense-grid, 
+    .project-data-form .grid, .modal-grid-3 {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+
+    /* 3. SETUP & LOGO */
+    .client-logo-container {
+        width: 100% !important;
+        height: auto !important;
+        padding: 24px !important;
+        margin-bottom: 24px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        background: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .client-logo-display {
+        max-height: 80px;
+        max-width: 100%;
+        object-fit: contain;
+        margin-bottom: 16px;
+    }
+
+    .dense-col-2 { width: 100% !important; }
+
+    /* 4. CARDS & CONTAINER */
+    .page-shell, .app-content {
+        padding: 16px !important;
+        padding-bottom: 100px !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .card {
+        padding: 20px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+        margin-bottom: 16px !important;
+    }
+
+    /* 5. TÍTULOS */
+    .app-title {
+        font-size: 20px !important;
+        margin-bottom: 16px !important;
+    }
+
+    /* 6. MODAIS */
+    .modal {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 24px 24px 0 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        transform: translateY(100%);
+        padding: 24px !important;
+        padding-bottom: max(30px, env(safe-area-inset-bottom)) !important;
+    }
+    .modal.show {
+        transform: translateY(0);
+    }
+}
