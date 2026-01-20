@@ -112,58 +112,58 @@
         </main>
       </section>
       <!-- VIEW: Status (painel de projetos mecanicos com abas internas e modais) -->
-      <section id="view-status" class="view" data-view="status">
-        <div class="mobile-nav-header glass nav-shell">
+            <section id="view-status" class="view" data-view="status">
+        <div class="mobile-nav-header">
             <button class="mobile-drawer-trigger" onclick="toggleDrawer()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-                <span id="mobile-nav-title">Menu</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+                <span id="mobile-nav-title" style="font-weight:600; font-size:16px;">Menu</span>
             </button>
-            <nav class="top-nav desktop-only">
-                <ul class="menu" tabindex="0">
-                    <li><a class="nav-link active" data-sub-page="setup" href="#">Setup</a></li>
-                    <li><a class="nav-link" data-sub-page="descricaoevento" href="#">Descrição Evento</a></li>
-                    <li><a class="nav-link" data-sub-page="dispositivos" href="#">Dispositivos</a></li>
-                    <li><a class="nav-link" data-sub-page="cronograma" href="#">Cronograma</a></li>
-                    <li><a class="nav-link" data-sub-page="dashboard" href="#">Dashboard</a></li>
-                    <li><a class="nav-link" data-sub-page="kanban" href="#">Kanban</a></li>
-                    <li><a class="nav-link" data-sub-page="recurso" href="#">Recurso</a></li>
-                </ul>
-                <span class="inkbar" aria-hidden="true"></span>
-            </nav>
         </div>
 
-        <div id="drawer-overlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+        <nav class="top-nav nav-shell desktop-only">
+            <ul class="menu" tabindex="0">
+                <li><a class="nav-link active" data-sub-page="setup" href="#">Setup</a></li>
+                <li><a class="nav-link" data-sub-page="descricaoevento" href="#">Descricao Evento</a></li>
+                <li><a class="nav-link" data-sub-page="dispositivos" href="#">Dispositivos</a></li>
+                <li><a class="nav-link" data-sub-page="cronograma" href="#">Cronograma</a></li>
+                <li><a class="nav-link" data-sub-page="dashboard" href="#">Dashboard</a></li>
+                <li><a class="nav-link" data-sub-page="kanban" href="#">Kanban</a></li>
+                <li><a class="nav-link" data-sub-page="recurso" href="#">Recurso</a></li>
+            </ul>
+            <span class="inkbar" aria-hidden="true"></span>
+        </nav><div id="drawer-overlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
         <aside id="drawer-menu" class="drawer-panel">
             <div class="drawer-header">
-                <div class="drawer-title">Navegação</div>
+                <div class="drawer-title">NavegaÃ§Ã£o</div>
                 <button class="drawer-close" onclick="toggleDrawer()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
             </div>
-            <div class="drawer-content">
+                        <div class="drawer-content">
                 <button class="drawer-item active" data-sub-page="setup" onclick="mobileNavigate('setup')">
-                    <span class="icon">⚙️</span> Setup
+                    <span class="icon">[ ]</span> Setup
                 </button>
                 <button class="drawer-item" data-sub-page="descricaoevento" onclick="mobileNavigate('descricaoevento')">
-                    <span class="icon">📝</span> Descrição Evento
+                    <span class="icon">[ ]</span> Descricao Evento
                 </button>
                 <button class="drawer-item" data-sub-page="dispositivos" onclick="mobileNavigate('dispositivos')">
-                    <span class="icon">🔧</span> Dispositivos
+                    <span class="icon">[ ]</span> Dispositivos
                 </button>
                 <button class="drawer-item" data-sub-page="cronograma" onclick="mobileNavigate('cronograma')">
-                    <span class="icon">📅</span> Cronograma
+                    <span class="icon">[ ]</span> Cronograma
                 </button>
                 <button class="drawer-item" data-sub-page="dashboard" onclick="mobileNavigate('dashboard')">
-                    <span class="icon">📊</span> Dashboard
+                    <span class="icon">[ ]</span> Dashboard
                 </button>
                 <button class="drawer-item" data-sub-page="kanban" onclick="mobileNavigate('kanban')">
-                    <span class="icon">📋</span> Kanban
+                    <span class="icon">[ ]</span> Kanban
                 </button>
                 <button class="drawer-item" data-sub-page="recurso" onclick="mobileNavigate('recurso')">
-                    <span class="icon">👥</span> Recurso
+                    <span class="icon">[ ]</span> Recurso
                 </button>
-            </div>
-            <div class="drawer-footer">
+            </div><div class="drawer-footer">
                 <small>Comau System v2.0</small>
             </div>
         </aside>
@@ -237,7 +237,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 20px;">
                      <div>
                         <h2 class="app-title" style="margin:0; font-size:20px;">Dados do Projeto</h2>
-                        <small class="muted">Informações gerais e configuração</small>
+                        <small class="muted">InformaÃ§Ãµes gerais e configuraÃ§Ã£o</small>
                      </div>
                      <div style="text-align:center;">
                          <div id="setup-client-logo-preview" style="width:60px; height:60px; background:#f3f4f6; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #e5e7eb;">
@@ -273,7 +273,7 @@
                             <input type="text" id="pd-projeto" class="input-clean" placeholder="Nome do Projeto">
                         </div>
                         <div class="input-group-clean">
-                            <label>Área</label>
+                            <label>Ãrea</label>
                             <input type="text" id="pd-area" class="input-clean" placeholder="Body Shop / Assembly">
                         </div>
                     </div>
@@ -336,7 +336,7 @@
                           <th>Milestone</th>
                           <th>Progresso (%)</th>
                           <th>Data Base</th>
-                          <th style="text-align:right;">Ações</th>
+                          <th style="text-align:right;">AÃ§Ãµes</th>
                         </tr>
                       </thead>
                       <tbody id="setup-classes-table"></tbody>
@@ -826,3 +826,8 @@
   <script type="module" src="app.js"></script>
 </body>
 </html>
+
+
+
+
+
