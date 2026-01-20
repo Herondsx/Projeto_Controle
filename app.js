@@ -1375,45 +1375,56 @@ const ViewRouter = (() => {
     return { init };
 })();
 
+/* --- PATCH JS: Correção da Animação da Barra Azul --- */
 function enhanceNav() {
     const nav = document.querySelector("nav.top-nav");
     if (!nav) return;
-    if (nav.dataset.bound === "1") return;
-    nav.dataset.bound = "1";
-    const menu = nav ? nav.querySelector(".menu") : null;
+    const menu = nav.querySelector(".menu");
     if (!menu) return;
+
     let ink = nav.querySelector(".inkbar");
     if (!ink) {
         ink = document.createElement("span");
         ink.className = "inkbar";
         nav.appendChild(ink);
     }
+
     const moveInk = (el, animate = true) => {
-        if (!el) return;
-        const menuRect = menu.getBoundingClientRect();
-        const rect = el.getBoundingClientRect();
-        const left = rect.left - menuRect.left + menu.scrollLeft + 4;
-        const width = Math.max(0, rect.width - 8);
+        if (!el) {
+            ink.style.opacity = "0";
+            return;
+        }
+
+        const navRect = nav.getBoundingClientRect();
+        const linkRect = el.getBoundingClientRect();
+        const left = linkRect.left - navRect.left;
+        const width = linkRect.width;
+
         if (!animate) ink.style.transition = "none";
-        ink.style.width = width + "px";
+
+        ink.style.width = `${width}px`;
         ink.style.transform = `translateX(${left}px)`;
-        if (!animate) requestAnimationFrame(() => (ink.style.transition = ""));
+        ink.style.opacity = "1";
+
+        if (!animate) {
+            void ink.offsetWidth;
+            requestAnimationFrame(() => (ink.style.transition = ""));
+        }
     };
+
     window.SiteUX = { ...(window.SiteUX || {}), moveInk };
+
     const activeOrFirst = () => menu.querySelector(".nav-link.active") || menu.querySelector(".nav-link");
-    setTimeout(() => moveInk(activeOrFirst(), false), 60);
+
+    setTimeout(() => moveInk(activeOrFirst(), false), 100);
+
     menu.addEventListener("mouseover", (e) => {
         const el = e.target.closest(".nav-link");
         if (el) moveInk(el);
     });
-    menu.addEventListener("focusin", (e) => {
-        const el = e.target.closest(".nav-link");
-        if (el) moveInk(el);
-    });
-    menu.addEventListener("mouseleave", () => moveInk(activeOrFirst()));
-    menu.addEventListener("focusout", (e) => {
-        if (!menu.contains(e.relatedTarget)) moveInk(activeOrFirst());
-    });
+
+    nav.addEventListener("mouseleave", () => moveInk(activeOrFirst()));
+
     window.addEventListener("resize", () => moveInk(activeOrFirst(), false));
 }
 
